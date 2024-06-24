@@ -6,7 +6,7 @@ import time
 import random
 import sys
 
-numpix = 294 #number of LEDs
+numpix = 288 #number of LEDs
 GPIO = 28 #PIN number on RBPico
 max_brightness = 10
 standard_brightness = 2
@@ -14,7 +14,7 @@ standard_brightness = 2
 stopped = False
 shuffle = True
 mode = 0
-number_modes = 15 #incl. 0
+number_modes = 12 #incl. 0
 speeds = [3.0, 1.0, 0.5, 0.1, 0.05, 0.01, 10.0, 5.0]
 speed_index = 2
 speed = speeds[speed_index]
@@ -37,7 +37,7 @@ onboard_led.off()
 
 def debounce(pin):
     prev = None
-    for _ in range(32):
+    for _ in range(60):#32):
         current_value = pin.value()
         if prev != None and prev != current_value:
             return None
@@ -59,7 +59,7 @@ def button1_callback(pin):
             clear()
         else:
             mode = mode +1
-        print('Current mode: ' + str(mode+1))
+        print('Current mode: ' + str(mode))
         #modes()
 
 def button2_callback(pin):
@@ -750,7 +750,7 @@ def simply_on(seconds=6000):
 
 def modes():
     global mode, shuffle, color, stopped, number_modes
-    first_round = False
+    first_round = True
     while True:
         if mode > number_modes:
             mode = 0
@@ -818,18 +818,17 @@ def modes():
             worm(seconds)
         elif mode == 11:
             print(f'Mode{mode}')
-        elif mode == 12:
-            print(f'Mode{mode}')
             clockwise = True
             if random.randint(0,1) == 1:
                 clockwise = False
             strips_clock(seconds,clockwise=clockwise)
-        elif mode == 13:
+        elif mode == 12:
             print(f'Mode{mode}')
             strips_random_order(seconds)
             
         first_round = False
-        mode = mode + 1
+        if not stopped:
+            mode = mode + 1
         clear()
 
 modes()
